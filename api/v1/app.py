@@ -1,7 +1,5 @@
 #!/usr/bin/python3
-"""
-Route to return status of the API
-"""
+"""Endpoint (route) will be to return the status of your API"""
 import os
 from flask import Flask
 from models import storage
@@ -9,7 +7,7 @@ from api.v1.views import app_views
 from flask_cors import CORS
 
 
-# creating the Flask app
+# creating a Flask app
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "0.0.0.0"}})
 
@@ -46,5 +44,3 @@ else:
 
 if __name__ == "__main__":
     app.run(host=host, port=port, threaded=True)
-
-
