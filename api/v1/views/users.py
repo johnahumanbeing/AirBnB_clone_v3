@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-route for handling User objects and operations
+Route for handling User objects and operations
 """
 from flask import jsonify, abort, request
 from api.v1.views import app_views, storage
@@ -8,13 +8,13 @@ from models.user import User
 
 
 @app_views.route("/users", methods=["GET"], strict_slashes=False)
-def user_get_all():
+def get_users():
     """
-    retrieves all User objects
-    :return: json of all users
+    Retrieves all User objects
+    :return: JSON of all users
     """
     user_list = []
-    user_obj = storage.all("User")
+    user_obj = storage.all(User)
     for obj in user_obj.values():
         user_list.append(obj.to_json())
 
@@ -22,10 +22,10 @@ def user_get_all():
 
 
 @app_views.route("/users", methods=["POST"], strict_slashes=False)
-def user_create():
+def create_user():
     """
-    create user route
-    :return: newly created user obj
+    Create user route
+    :return: Newly created user object
     """
     user_json = request.get_json(silent=True)
     if user_json is None:
@@ -43,15 +43,14 @@ def user_create():
     return resp
 
 
-@app_views.route("/users/<user_id>",  methods=["GET"], strict_slashes=False)
-def user_by_id(user_id):
+@app_views.route("/users/<user_id>", methods=["GET"], strict_slashes=False)
+def get_user_by_id(user_id):
     """
-    gets a specific User object by ID
-    :param user_id: user object id
-    :return: user obj with the specified id or error
+    Gets a specific User object by ID
+    :param user_id: User object ID
+    :return: User object with the specified ID or error
     """
-
-    fetched_obj = storage.get("User", str(user_id))
+    fetched_obj = storage.get(User, user_id)
 
     if fetched_obj is None:
         abort(404)
@@ -59,19 +58,19 @@ def user_by_id(user_id):
     return jsonify(fetched_obj.to_json())
 
 
-@app_views.route("/users/<user_id>",  methods=["PUT"], strict_slashes=False)
-def user_put(user_id):
+@app_views.route("/users/<user_id>", methods=["PUT"], strict_slashes=False)
+def update_user(user_id):
     """
-    updates specific User object by ID
-    :param user_id: user object ID
-    :return: user object and 200 on success, or 400 or 404 on failure
+    Updates specific User object by ID
+    :param user_id: User object ID
+    :return: User object and 200 on success, or 400 or 404 on failure
     """
     user_json = request.get_json(silent=True)
 
     if user_json is None:
         abort(400, 'Not a JSON')
 
-    fetched_obj = storage.get("User", str(user_id))
+    fetched_obj = storage.get(User, user_id)
 
     if fetched_obj is None:
         abort(404)
@@ -85,15 +84,14 @@ def user_put(user_id):
     return jsonify(fetched_obj.to_json())
 
 
-@app_views.route("/users/<user_id>",  methods=["DELETE"], strict_slashes=False)
-def user_delete_by_id(user_id):
+@app_views.route("/users/<user_id>", methods=["DELETE"], strict_slashes=False)
+def delete_user_by_id(user_id):
     """
-    deletes User by id
-    :param user_id: user object id
-    :return: empty dict with 200 or 404 if not found
+    Deletes User by ID
+    :param user_id: User object ID
+    :return: Empty dictionary with 200 or 404 if not found
     """
-
-    fetched_obj = storage.get("User", str(user_id))
+    fetched_obj = storage.get(User, user_id)
 
     if fetched_obj is None:
         abort(404)
