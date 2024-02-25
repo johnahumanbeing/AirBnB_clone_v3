@@ -115,3 +115,40 @@ def place_put(place_id):
     fetched_obj.save()
 
     return jsonify(fetched_obj.to_dict())
+
+
+@app_views.route("/places_search", methods=["POST"], strict_slashes=False)
+def places_search():
+    """
+    Search for places based on JSON request
+    :return: JSON of matching Places
+    """
+    try:
+        data = request.get_json()
+    except Exception:
+        abort(400, "Not a JSON")
+
+    if not data or all(not data[key] for key in ["states", "cities", "amenities"]):
+        places = storage.all(Place).values()
+        return jsonify([place.to_dict() for place in places]), 200
+
+    states = [storage.get(State, state_id) for state_id in data.get("states", [])]
+    cities = [storage.get(City, city_id) for city_id in data.get("cities", [])]
+    amenities = [storage.get(Amenity, amenity_id) for amenity_id in data.get("amenities", [])]
+
+    if not states and not cities and not amenities:
+        abort(400, "Invalid search criteria")
+
+    places = []
+
+    for state in states:
+        places.extend(state.places)
+
+    for city in cities:
+        if city not in places:
+            places.extend(city.places)
+
+    if amenities:
+        places = [place for place in places if all(amenity in place.amenities for amenity in amenities)]
+
+    return jsonify([place.to_dict() for place in places]), 200
