@@ -68,7 +68,7 @@ def place_by_id(place_id):
     return jsonify(fetched_obj.to_json())
 
 
-@app_views.route("/places/<place_id>",  methods=["PUT"],
+@app_views.route("/places/<place_id>", methods=["PUT"],
                  strict_slashes=False)
 def place_put(place_id):
     """
